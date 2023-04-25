@@ -7,7 +7,7 @@ export let CartContext = createContext(0);
 export default function CartContextProvider(props) {
   const [count, setCount] = useState(0);
 
-  // let [cartData, setCartData] = useState();
+  // let [cartId, setCartId] = useState(null);
 
   let userToken = localStorage.getItem("userToken");
   let headers = { token: userToken };
@@ -21,12 +21,23 @@ export default function CartContextProvider(props) {
 
   function getLoggedUserCart() {
     return axios
-      .get(
-        `${baseUrl}/cart`,{ headers }
-      )
+      .get(`${baseUrl}/cart`, { headers })
       .then((response) => response)
       .catch((err) => err);
   }
+
+  // function getLoggedUserCart() {
+  //   return axios
+  //     .get(`${baseUrl}/cart`, { headers })
+  //     .then((res) => {
+  //       // console.log(response.data.data._id);
+  //       if(res.data.status == 'success'){
+  //         setCartId(res.data.data._id);
+  //         console.log(res.data.data._id);
+  //       }
+  //     })
+  //     .catch((err) => err);
+  // }
 
   // async function getLoggedUserCart() {
   //   let { data } = await axios
@@ -42,6 +53,10 @@ export default function CartContextProvider(props) {
       .then((data) => {
         // console.log(data.data.numOfCartItems);
         setCount(data.data.numOfCartItems);
+        // if(data.status == 'success'){
+        //   setCartId(data.data._id);
+        //   console.log(data.data._id);
+        // }
       })
       .catch((err) => {
         console.log(err);
@@ -58,11 +73,17 @@ export default function CartContextProvider(props) {
   // }
 
   function updateProductCount(productId, productCount) {
-    return axios
-      .put(`${baseUrl}/cart/${productId}`, { count: productCount }, { headers })
-      // setCount(count)
-      .then((response) => response)
-      .catch((err) => err);
+    return (
+      axios
+        .put(
+          `${baseUrl}/cart/${productId}`,
+          { count: productCount },
+          { headers }
+        )
+        // setCount(count)
+        .then((response) => response)
+        .catch((err) => err)
+    );
   }
 
   function deleteCartItem(token, productId) {
@@ -79,7 +100,6 @@ export default function CartContextProvider(props) {
   //     // .then((response) => response)
   //     // .catch((err) => err);
   // }
-
 
   // *************************************************************
 
@@ -105,19 +125,24 @@ export default function CartContextProvider(props) {
   //   setData(result);
   // };
 
-
-
-
-function onlinePayment(cartId,shippingAddress){
-  return axios
-      .post(`${baseUrl}/orders/checkout-session/${cartId}?url=http://localhost:3000`,{shippingAddress:shippingAddress}, { headers })
+  function onlinePayment(cartId, shippingAddress) {
+    return axios
+      .post(
+        `${baseUrl}/orders/checkout-session/${cartId}?url=http://localhost:3000`,
+        { shippingAddress: shippingAddress },
+        { headers }
+      )
       .then((response) => response)
       .catch((err) => err);
-}
+  }
 
+  // async function getInitalValues(){
+  //   let {data} = await 
+  // }
 
   useEffect(() => {
     geCartCount();
+    // getLoggedUserCart()
   }, []);
 
   return (
@@ -131,6 +156,7 @@ function onlinePayment(cartId,shippingAddress){
         count,
         geCartCount,
         onlinePayment,
+        // cartId,
         // cartData,
         // setCartData,
         // cartDetails,

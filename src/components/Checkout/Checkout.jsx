@@ -1,23 +1,33 @@
 import axios from "axios";
 import { useFormik } from "formik";
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { baseUrl } from "../../utils/baseUrl";
 import { CartContext } from "../../Context/CartContext";
- 
+
 export default function Checkout() {
-  let {
-    onlinePayment,
-  } = useContext(CartContext);
+  let { onlinePayment, getLoggedUserCart } = useContext(CartContext);
   // const { cartId } = useParams();
 
-  async function handlePayment(values){
-   let {data} = await onlinePayment('64476c38e91645003368206b',values)
-   console.log(data);
-   if(data.session){
-    console.log(data.session.url);
-    window.location.href=data.session.url
-   }
+  let [cartId, setCartId] = useState(null);
+
+  async function getCartId() {
+    let token = localStorage.getItem("userToken");
+    if (token) {
+      let response = await getLoggedUserCart(token);
+      setCartId(response.data.data._id);
+      // setTotalPrice(response.data.data.totalCartPrice);
+    }
+    // console.log(response.data);
+  }
+
+  async function handlePayment(values) {
+    let { data } = await onlinePayment(cartId, values);
+    console.log(data);
+    if (data.session) {
+      console.log(data.session.url);
+      window.location.href = data.session.url;
+    }
   }
   const formik = useFormik({
     initialValues: {
@@ -25,9 +35,8 @@ export default function Checkout() {
       phone: "",
       city: "",
     },
-    onSubmit:handlePayment 
+    onSubmit: handlePayment,
   });
-
 
   // const formik = useFormik({
   //   initialValues: {
@@ -57,6 +66,10 @@ export default function Checkout() {
   //     window.location.href = data.session.url;
   //   }
   // }
+
+  useEffect(() => {
+    getCartId();
+  }, []);
 
   return (
     <div className="my-4">
