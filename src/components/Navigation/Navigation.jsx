@@ -23,9 +23,9 @@ const Navigation = ({ userData, logOut }) => {
   return (
     <Navbar className="bg-main-light" variant="" expand="lg">
       <Container>
-        <Navbar.Brand to="/home">
+        <a href="/home">
           <img src={logo} alt="" />
-        </Navbar.Brand>
+        </a>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           {userData && (
