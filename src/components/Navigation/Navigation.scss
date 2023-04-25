@@ -1,0 +1,28 @@
+// .social-media {
+//   .fa-facebook {
+//     color: blue;
+//   }
+// }
+
+i {
+  // color:rgb(73, 212, 57);
+  // font-size: 25px;
+}
+
+nav {
+  // border-bottom: 10px solid red;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  a {
+    padding: 10px;
+    // color: #fff !important;
+    &:active {
+      color: red;
+    }
+  }
+  @media (max-width:1203px) {
+    a {
+      padding: 5px;
+    }
+  }
+}
+
